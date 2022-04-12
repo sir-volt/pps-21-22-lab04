@@ -10,6 +10,12 @@ enum List[E]:
 
 // a companion object (i.e., module) for List
 object List:
+
+  def apply[A](elements: A*): List[A] =
+    var listEl: List[A] = List.Nil()
+    elements.foreach(el => listEl = append(listEl, List.Cons(el, List.Nil())))
+    listEl
+
   def sum(l: List[Int]): Int = l match
     case Cons(h, t) => h + sum(t)
     case _ => 0
