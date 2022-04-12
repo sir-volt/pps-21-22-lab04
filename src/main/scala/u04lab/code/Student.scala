@@ -1,6 +1,7 @@
 package u04lab.code
 
 import u04lab.code.List.*
+import u04lab.code.Option.*
 
 trait Student:
   def name: String
@@ -34,6 +35,17 @@ object Course:
     CourseImpl(name, teacher)
   case class CourseImpl(override val name: String, override val teacher: String) extends Course
 
+object sameTeacher:
+  def unapply(courses: List[Course]): Option[String] =
+    val teacher = map(take(courses, 1))(el => el.teacher)
+    (map(courses)(el => el.teacher), teacher) match
+      case (Cons(h, t), Cons(teach, _)) if(h == teach) => Some(teach)
+      case _ => None()
+
+
+
+
+
 @main def checkStudents(): Unit =
   val cPPS = Course("PPS", "Viroli")
   val cPCD = Course("PCD", "Ricci")
@@ -42,11 +54,13 @@ object Course:
   val s2 = Student("gino", 2016)
   val s3 = Student("rino") // defaults to 2017
   val s4 = Student("giacomo")
-  val allCourses = List.Cons(cPPS, List.Cons(cPCD, List.Cons(cSDR, List.Nil())))
-  /*
+  val allCourses = List(cPPS, cPCD, cSDR)
+  val allStudents = List(s1, s2, s3, s4)
+
+  println(allStudents)
   allCourses match
-    case sameTeacher(t) => println(s"$allCourses have same teacher $t")
-    case _ => println(s"$allCourses have different teachers")*/
+    case sameTeacher => println(s"$allCourses have same teacher $sameTeacher")
+    case _ => println(s"$allCourses have different teachers")
   s1.enrolling(cPPS)
   s1.enrolling(cPCD)
   s2.enrolling(cPPS)
