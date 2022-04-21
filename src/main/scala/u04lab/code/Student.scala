@@ -67,12 +67,12 @@ object sameTeacher:
 
   println(allStudents)
   allCourses match
-    case sameTeacher(allCourses) => println(s"$allCourses have same teacher $sameTeacher")
+    case sameTeacher(teacher) => println(s"$allCourses have same teacher $teacher")
     case _ => println(s"$allCourses have different teachers")
 
   sameCourse match
-    case sameTeacher(sameCourse) => println(s"$sameCourse have same teacher $sameTeacher")
-    case _ => println(s"$allCourses have different teachers")
+    case sameTeacher(teacher) => println(s"$sameCourse have same teacher $teacher")
+    case _ => println(s"$sameCourse have different teachers")
   s1.enrolling(cPPS)
   s1.enrolling(cPCD)
   s2.enrolling(cPPS)
