@@ -17,7 +17,7 @@ trait Course:
 object Student:
   def apply(name: String, year: Int = 2017): Student =
     StudentImpl(name, year)
-  case class StudentImpl(override val name: String, override val year: Int) extends Student:
+  case class StudentImpl(name: String, year: Int) extends Student:
     private var studentCourses: List[Course] = List.Nil()
 
     override def enrolling(course: Course*): Unit =
@@ -33,14 +33,20 @@ object Student:
 object Course:
   def apply(name: String, teacher: String): Course =
     CourseImpl(name, teacher)
-  case class CourseImpl(override val name: String, override val teacher: String) extends Course
+  case class CourseImpl(name: String, teacher: String) extends Course
 
 object sameTeacher:
-  def unapply(courses: List[Course]): Option[String] =
-    val teacher = map(take(courses, 1))(el => el.teacher)
-    (map(courses)(el => el.teacher), teacher) match
-      case (Cons(h, t), Cons(teach, _)) if(h == teach) => Some(teach)
-      case _ => None()
+  def unapply(courses: List[Course]): scala.Option[String] =
+    val allTeachers = map(courses)(_.teacher)
+    val checkTeacher = List.take(allTeachers, 1)
+    checkTeacher match
+      case Cons(teacher, _) if(length(allTeachers) == length(filter(allTeachers)(el => el == teacher))) => scala.Some(teacher)
+      case _ => scala.None
+
+
+
+
+
 
 
 
@@ -48,6 +54,7 @@ object sameTeacher:
 
 @main def checkStudents(): Unit =
   val cPPS = Course("PPS", "Viroli")
+  val cPPS2 = Course("PPS2", "Viroli")
   val cPCD = Course("PCD", "Ricci")
   val cSDR = Course("SDR", "D'Angelo")
   val s1 = Student("mario", 2015)
@@ -55,11 +62,16 @@ object sameTeacher:
   val s3 = Student("rino") // defaults to 2017
   val s4 = Student("giacomo")
   val allCourses = List(cPPS, cPCD, cSDR)
+  val sameCourse = List(cPPS, cPPS2)
   val allStudents = List(s1, s2, s3, s4)
 
   println(allStudents)
   allCourses match
-    case sameTeacher => println(s"$allCourses have same teacher $sameTeacher")
+    case sameTeacher(allCourses) => println(s"$allCourses have same teacher $sameTeacher")
+    case _ => println(s"$allCourses have different teachers")
+
+  sameCourse match
+    case sameTeacher(sameCourse) => println(s"$sameCourse have same teacher $sameTeacher")
     case _ => println(s"$allCourses have different teachers")
   s1.enrolling(cPPS)
   s1.enrolling(cPCD)
